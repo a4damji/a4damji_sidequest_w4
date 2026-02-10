@@ -27,8 +27,6 @@ function setup() {
 function draw() {
   // draw the world
   world.drawWorld();
-  fill("gold");
-  rect(width - 70, 0, 70, 200);
 
   if (gameState === "start") {
     fill("white");
