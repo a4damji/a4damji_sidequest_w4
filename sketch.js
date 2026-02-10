@@ -1,25 +1,12 @@
-/*
-Week 4 — Example 5: Example 5: Blob Platformer (JSON + Classes)
-Course: GBDA302
-Instructors: Dr. Karen Cochrane and David Han
-Date: Feb. 5, 2026
-
-This file orchestrates everything:
-- load JSON in preload()
-- create WorldLevel from JSON
-- create BlobPlayer
-- update + draw each frame
-- handle input events (jump, optional next level)
-
-This matches the structure of the original blob sketch from Week 2 but moves
-details into classes.
-*/
-
 let data; // raw JSON data
 let levelIndex = 0;
 
 let world; // WorldLevel instance (current level)
 let player; // BlobPlayer instance
+
+let loss = 0;
+let win = 0;
+let gameState = "start";
 
 function preload() {
   // Load the level data from disk before setup runs.
@@ -32,7 +19,6 @@ function setup() {
 
   // Load the first level.
   loadLevel(0);
-
   // Simple shared style setup.
   noStroke();
   textFont("sans-serif");
@@ -40,29 +26,88 @@ function setup() {
 }
 
 function draw() {
-  // 1) Draw the world (background + platforms)
+  // draw the world
   world.drawWorld();
+  fill("gold");
+  rect(width - 70, 0, 70, 200);
 
-  // 2) Update and draw the player on top of the world
-  player.update(world.platforms);
+  if (gameState === "start") {
+    fill("white");
+    rect(width / 2 - 150, height / 2 - 25, 250, 50);
+    fill(0);
+    text("Press ENTER to Start", width / 2 - 100, height / 2);
+    return;
+  }
+
+  if (gameState === "playing") {
+    player.update();
+
+    if (checkFinCollision(player)) {
+      win++;
+      gameState = "win";
+      noLoop();
+    }
+
+    if (checkPipeCollision(player, world.pipes)) {
+      loss++;
+      gameState = "lose";
+      noLoop();
+    }
+  }
+
   player.draw(world.theme.blob);
 
-  // 3) HUD
   fill(0);
   text(world.name, 10, 18);
-  text("Move: A/D or ←/→ • Jump: Space/W/↑ • Next: N", 10, 36);
+  text(
+    "Press enter to start. Use space bar, w, or the up arrow to fly!",
+    10,
+    36,
+  );
+
+  // win screen
+  if (gameState === "win") {
+    fill("white");
+    rect(width / 2 - 120, height / 2 - 25, 300, 90);
+
+    fill("#6422e0");
+    text("You Did It!", width / 2 - 10, height / 2);
+
+    fill("red");
+    text("Win count: " + win, width / 2 - 10, height / 2 + 25);
+
+    text("Press ENTER to restart", width / 2 - 40, height / 2 + 45);
+  }
+
+  //lose screen
+  if (gameState === "lose") {
+    fill("white");
+    rect(width / 2 - 120, height / 2 - 25, 300, 90);
+
+    fill("#6422e0");
+    text("GAME OVER", width / 2 - 10, height / 2);
+
+    fill("red");
+    text("Loss count: " + loss, width / 2 - 10, height / 2 + 25);
+
+    text("Press ENTER to restart", width / 2 - 40, height / 2 + 45);
+  }
 }
 
 function keyPressed() {
-  // Jump keys
-  if (key === " " || key === "W" || key === "w" || keyCode === UP_ARROW) {
-    player.jump();
+  // Start or restart game
+  if (keyCode === ENTER) {
+    loadLevel(levelIndex);
+    gameState = "playing";
+    loop();
   }
 
-  // Optional: cycle levels with N (as with the earlier examples)
-  if (key === "n" || key === "N") {
-    const next = (levelIndex + 1) % data.levels.length;
-    loadLevel(next);
+  // Flap only when playing
+  if (
+    gameState === "playing" &&
+    (key === " " || keyCode === UP_ARROW || key === "w" || key === "W")
+  ) {
+    player.flap();
   }
 }
 
@@ -85,4 +130,34 @@ function loadLevel(i) {
 
   // Apply level settings + respawn.
   player.spawnFromLevel(world);
+}
+
+function checkPipeCollision(player, pipes) {
+  for (const pipe of pipes) {
+    let topH = pipe.gapY - pipe.gapH / 2;
+    let bottomY = pipe.gapY + pipe.gapH / 2;
+
+    // Horizontal overlap
+    if (player.x + player.r > pipe.x && player.x - player.r < pipe.x + pipe.w) {
+      // Hit top pipe
+      if (player.y - player.r < topH) return true;
+
+      // Hit bottom pipe
+      if (player.y + player.r > bottomY) return true;
+    }
+  }
+
+  return false;
+}
+
+function checkFinCollision(player) {
+  if (
+    player.x > 1200 &&
+    player.x < 1200 + 70 &&
+    player.y > 0 &&
+    player.y < 0 + 200
+  ) {
+    return true;
+  }
+  return false;
 }
