@@ -5,7 +5,6 @@ let world; // WorldLevel instance (current level)
 let player; // BlobPlayer instance
 
 let loss = 0;
-let win = 0;
 let gameState = "start";
 
 function preload() {
@@ -42,12 +41,6 @@ function draw() {
   if (gameState === "playing") {
     player.update();
 
-    if (checkFinCollision(player)) {
-      win++;
-      gameState = "win";
-      noLoop();
-    }
-
     if (checkPipeCollision(player, world.pipes)) {
       loss++;
       gameState = "lose";
@@ -64,20 +57,6 @@ function draw() {
     10,
     36,
   );
-
-  // win screen
-  if (gameState === "win") {
-    fill("white");
-    rect(width / 2 - 120, height / 2 - 25, 300, 90);
-
-    fill("#6422e0");
-    text("You Did It!", width / 2 - 10, height / 2);
-
-    fill("red");
-    text("Win count: " + win, width / 2 - 10, height / 2 + 25);
-
-    text("Press ENTER to restart", width / 2 - 40, height / 2 + 45);
-  }
 
   //lose screen
   if (gameState === "lose") {
@@ -147,17 +126,5 @@ function checkPipeCollision(player, pipes) {
     }
   }
 
-  return false;
-}
-
-function checkFinCollision(player) {
-  if (
-    player.x > 1200 &&
-    player.x < 1200 + 70 &&
-    player.y > 0 &&
-    player.y < 0 + 200
-  ) {
-    return true;
-  }
   return false;
 }
