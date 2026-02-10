@@ -1,42 +1,27 @@
 ## Project Title
 
-GBDA302 Week 4 Example 5: Blob Platformer (JSON + Classes)
+a4damji_sidequest_w4
 
 ---
 
 ## Authors
 
-Karen Cochrane and David Han
+Amara Damji, a4damji, 21071052
 
 ---
 
 ## Description
 
-This matches the structure of the original blob sketch from Week 2 but moves
-details into classes.
+A flappy bird style game. The goal is to keep the blob up and make it through the 'pipes' and make it to the other side.
 
 ---
 
-## Learning Goals
+## Set up and Interactions
 
-Learning Goals:
-
-- - load JSON in preload()
-- create WorldLevel from JSON
-- create BlobPlayer
-- update + draw each frame
-- handle input events (jump, optional next level)
+To start the game the user must click "ENTER". To control the blob user needs to press the space bar, up arrow, or w key. If they hit a pipe they will get a you lose screen. To restart at anypoint click enter again.
 
 ---
 
 ## Assets
 
 N/A
-
----
-
-## GenAI
-
-The code was written by Dr. Karen Cochrane and David Han but they used GenAI to write the comments.
-
----

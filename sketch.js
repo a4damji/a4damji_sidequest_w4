@@ -53,7 +53,7 @@ function draw() {
   fill(0);
   text(world.name, 10, 18);
   text(
-    "Press enter to start. Use space bar, w, or the up arrow to fly!",
+    "Press enter to start/restart. Use space bar, w, or the up arrow to fly!",
     10,
     36,
   );
